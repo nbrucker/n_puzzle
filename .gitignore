@@ -3,3 +3,4 @@
 *.pyc
 generator.py
 puzzle
+test.py
