@@ -32,7 +32,7 @@ def checkContent(content):
 	puzzle = []
 	values = []
 	while (i < len(content)):
-		tab = content[i].split(' ')
+		tab = content[i].split()
 		if (len(tab) != size):
 			error.error('Given size don\'t match puzzle size')
 		n = 0
@@ -96,9 +96,8 @@ def checkSolvable(puzzle, goal):
 	if (len(puzzle) % 2 == 0):
 		start += int(getZeroIndex(puzzle) / len(puzzle))
 		end += int(getZeroIndex(goal) / len(puzzle))
-	if ((start % 2 == end % 2) == False):
+	if ((start % 2 == end % 2) is False):
 		error.error('Unsolvable')
-
 
 def getGoalState(size):
 	goal = []

@@ -1,5 +1,7 @@
 import error
 
+manhattanPosition = {}
+
 def getPositions(number, puzzle):
 	i = 0
 	length = len(puzzle)
@@ -13,6 +15,7 @@ def getPositions(number, puzzle):
 	error.error('Unexpected error')
 
 def getManhattan(puzzle, goal):
+	global manhattanPosition
 	h = 0
 	i = 0
 	length = len(puzzle)
@@ -20,7 +23,11 @@ def getManhattan(puzzle, goal):
 		j = 0
 		while (j < length):
 			if (puzzle[i][j] != 0 and puzzle[i][j] != goal[i][j]):
-				positions = getPositions(puzzle[i][j], goal)
+				if (puzzle[i][j] in manhattanPosition):
+					positions = manhattanPosition[puzzle[i][j]]
+				else:
+					positions = getPositions(puzzle[i][j], goal)
+					manhattanPosition[puzzle[i][j]] = positions
 				h += abs(i - positions[0]) + abs(j - positions[1])
 			j += 1
 		i += 1
