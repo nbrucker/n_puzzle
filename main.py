@@ -1,6 +1,8 @@
 import sys
+import time
 
 import error
+import solve
 
 def cleanContent(content):
 	valid = []
@@ -20,6 +22,8 @@ def isInt(x):
 		return False
 
 def checkContent(content):
+	if (len(content) <= 0):
+		error.error('Unvalid content')
 	size = content[0]
 	if (isInt(size) == False):
 		error.error('Unvalid size')
@@ -47,71 +51,9 @@ def checkContent(content):
 		if (i not in values):
 			error.error('Error in puzzle')
 		i += 1
+	if (len(puzzle) != size):
+		error.error('Given size don\'t match puzzle size')
 	return puzzle
-
-# def getSnail(puzzle):
-# 	tab = []
-# 	puzzle_len = len(puzzle)
-# 	i = 0
-# 	j = 0
-# 	while (len(tab) != puzzle_len * puzzle_len):
-# 		while (j < puzzle_len and puzzle[i][j] not in tab):
-# 			tab.append(puzzle[i][j])
-# 			j += 1
-# 		j -= 1
-# 		i += 1
-# 		while (i < puzzle_len and puzzle[i][j] not in tab):
-# 			tab.append(puzzle[i][j])
-# 			i += 1
-# 		i -= 1
-# 		j -= 1
-# 		while (j >= 0 and puzzle[i][j] not in tab):
-# 			tab.append(puzzle[i][j])
-# 			j -= 1
-# 		j += 1
-# 		i -= 1
-# 		while (i >= 0 and puzzle[i][j] not in tab):
-# 			tab.append(puzzle[i][j])
-# 			i -= 1
-# 		i += 1
-# 		j += 1
-# 	return tab
-
-# def getInversions(puzzle):
-# 	puzzle.remove(0)
-# 	inversions = 0
-# 	i = 0
-# 	while (i < len(puzzle)):
-# 		j = i + 1
-# 		while (j < len(puzzle)):
-# 			if (puzzle[j] < puzzle[i]):
-# 				inversions += 1
-# 			j += 1
-# 		i += 1
-# 	return inversions
-
-# def getZeroLine(puzzle):
-# 	i = len(puzzle) - 1
-# 	while (i >= 0):
-# 		if (0 in puzzle[i]):
-# 			return len(puzzle) - i
-# 		i -= 1
-# 	error.error('Unexpected error')
-#
-# def checkSolvable(puzzle):
-# 	inversions = getInversions(getSnail(puzzle))
-# 	if (len(puzzle) % 2 == 0):
-# 		line = getZeroLine(puzzle)
-# 		print(line)
-# 		print(line % 2)
-# 		print(inversions)
-# 		print(inversions % 2)
-# 		if (line % 2 == 0 and inversions % 2 == 0):
-# 			error.error('Puzzle unsolvable')
-# 		elif (line % 2 != 0 and inversions % 2 != 0):
-# 			error.error('Puzzle unsolvable')
-# 	elif (inversions % 2 != 0):
-# 			error.error('Puzzle unsolvable')
 
 def getZeroIndex(tab):
 	i = 0
@@ -154,7 +96,8 @@ def checkSolvable(puzzle, goal):
 	if (len(puzzle) % 2 == 0):
 		start += int(getZeroIndex(puzzle) / len(puzzle))
 		end += int(getZeroIndex(goal) / len(puzzle))
-	print(start % 2 == end % 2)
+	if ((start % 2 == end % 2) == False):
+		error.error('Unsolvable')
 
 
 def getGoalState(size):
@@ -209,6 +152,9 @@ def main():
 	puzzle = checkContent(content)
 	goal = getGoalState(len(puzzle))
 	checkSolvable(puzzle, goal)
+	solve.solve(puzzle, goal)
 
 if __name__ == "__main__":
+	start_time = time.clock()
 	main()
+	print('all: ' + str(time.clock() - start_time))
