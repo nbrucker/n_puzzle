@@ -137,8 +137,13 @@ def getGoalState(size):
 	return goal
 
 def main():
-	if (len(sys.argv) != 2):
-		error.error('python main.py [file]')
+	if (len(sys.argv) != 4):
+		error.error('python main.py [file] -h [0|1|2]')
+	if (not isInt(sys.argv[3])):
+		error.error('python main.py [file] -h [0|1|2]')
+	sys.argv[3] = int(sys.argv[3])
+	if (sys.argv[2] != '-h' or sys.argv[3] < 0 or sys.argv[3] > 2):
+		error.error('python main.py [file] -h [0|1|2]')
 	filename = sys.argv[1]
 	content = ''
 	try:
