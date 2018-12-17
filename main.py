@@ -1,5 +1,4 @@
 import sys
-import time
 
 import error
 import solve
@@ -159,6 +158,4 @@ def main():
 	solve.solve(puzzle, goal)
 
 if __name__ == "__main__":
-	start_time = time.clock()
 	main()
-	print('all: ' + str(time.clock() - start_time))

@@ -1,10 +1,5 @@
-import time
-
 import heuristic
 import error
-
-timeHeuristic = 0
-timeZero = 0
 
 class Node:
 	def __init__(self, puzzle, parent, goal):
@@ -12,10 +7,7 @@ class Node:
 		for key in puzzle:
 			new.append(key[:])
 		self.puzzle = new
-		global timeHeuristic
-		start_time = time.clock()
 		self.h = heuristic.getHeuristic(puzzle, goal)
-		timeHeuristic += time.clock() - start_time
 		if (parent):
 			self.g = parent.g + 1
 		else:
@@ -56,10 +48,7 @@ def getChild(parent, positions, direction, goal):
 
 def getChilds(parent, goal):
 	childs = []
-	global timeZero
-	start_time = time.clock()
 	positions = heuristic.getPositions(0, parent.puzzle)
-	timeZero += time.clock() - start_time
 	if (positions[0] != 0):
 		childs.append(getChild(parent, positions, 'up', goal))
 	if (positions[0] != len(parent.puzzle) - 1):
@@ -85,71 +74,67 @@ def getLowest(queue):
 	error.error('Unexpected error')
 
 def solve(puzzle, goal):
-	timeFind = 0
-	timeChilds = 0
-	timeInsert = 0
-	timeLowest = 0
+	countOpen = 0;
 	node = Node(puzzle, None, goal)
 	opened = {}
 	closed = {}
 	queue = {}
 	opened[node.stringify] = node
+	countOpen += 1;
 	queue[node.f] = {}
 	queue[node.f][node.stringify] = node
 	success = False
 	while (len(opened) > 0 and not success):
-		start_time = time.clock()
 		state = getLowest(queue)
-		timeLowest += time.clock() - start_time
 		if (state.h == 0):
 			success = True
 		else:
 			del opened[state.stringify]
 			del queue[state.f][state.stringify]
 			closed[state.stringify] = state
-			start_time = time.clock()
 			childs = getChilds(state, goal)
-			timeChilds += time.clock() - start_time
 			for child in childs:
-				start_time = time.clock()
 				inOpen = checkPuzzleExist(child, opened)
 				inClose = checkPuzzleExist(child, closed)
-				timeFind += time.clock() - start_time
 				if (inOpen is not None):
 					if (child.f < inOpen.f):
 						del opened[inOpen.stringify]
 						del queue[inOpen.f][inOpen.stringify]
-						start_time = time.clock()
 						opened[child.stringify] = child
 						if (child.f not in queue):
 							queue[child.f] = {}
 						queue[child.f][child.stringify] = child
-						timeInsert += time.clock() - start_time
 				elif (inClose is not None):
 					if (child.f < inClose.f):
 						del closed[inClose.stringify]
-						start_time = time.clock()
 						opened[child.stringify] = child
 						if (child.f not in queue):
 							queue[child.f] = {}
 						queue[child.f][child.stringify] = child
-						timeInsert += time.clock() - start_time
 				else:
-					start_time = time.clock()
 					opened[child.stringify] = child
+					countOpen += 1;
 					if (child.f not in queue):
 						queue[child.f] = {}
 					queue[child.f][child.stringify] = child
-					timeInsert += time.clock() - start_time
 
 	if (success is False):
 		error.error('Unexpected error')
-	print('find: ' + str(timeFind))
-	print('childs: ' + str(timeChilds))
-	print('insert: ' + str(timeInsert))
-	print('lowest: ' + str(timeLowest))
-	global timeHeuristic
-	print('heuristic: ' + str(timeHeuristic))
-	global timeZero
-	print('zero: ' + str(timeZero))
-	print(state.puzzle)
+	countState = len(opened) + len(closed)
+	moves = state.g
+	path = []
+	while (state):
+		display = ''
+		for key in state.puzzle:
+			line = ''
+			for x in key:
+				line += str(x) + ' '
+			display += line + '\n'
+		path.append(display)
+		state = state.parent
+	print('Total number of states ever selected in the opened set: ' + str(countOpen))
+	print('Maximum number of states: ' + str(countState))
+	print('Number of moves: ' + str(moves) + '\n')
+	while (moves >= 0):
+		print(path[moves])
+		moves -= 1
