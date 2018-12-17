@@ -4,15 +4,13 @@ import heuristic
 import error
 
 timeHeuristic = 0
+timeZero = 0
 
 class Node:
 	def __init__(self, puzzle, parent, goal):
 		new = []
 		for key in puzzle:
-			x = []
-			for c in key:
-				x.append(c)
-			new.append(x)
+			new.append(key[:])
 		self.puzzle = new
 		global timeHeuristic
 		start_time = time.clock()
@@ -42,10 +40,7 @@ def swap(puzzle, pos1, pos2):
 def getChild(parent, positions, direction, goal):
 	new = []
 	for key in parent.puzzle:
-		x = []
-		for c in key:
-			x.append(c)
-		new.append(x)
+		new.append(key[:])
 	if (direction == 'up'):
 		new = swap(new, positions, [positions[0] - 1, positions[1]])
 	elif (direction == 'down'):
@@ -61,7 +56,10 @@ def getChild(parent, positions, direction, goal):
 
 def getChilds(parent, goal):
 	childs = []
+	global timeZero
+	start_time = time.clock()
 	positions = heuristic.getPositions(0, parent.puzzle)
+	timeZero += time.clock() - start_time
 	if (positions[0] != 0):
 		childs.append(getChild(parent, positions, 'up', goal))
 	if (positions[0] != len(parent.puzzle) - 1):
@@ -152,4 +150,6 @@ def solve(puzzle, goal):
 	print('lowest: ' + str(timeLowest))
 	global timeHeuristic
 	print('heuristic: ' + str(timeHeuristic))
+	global timeZero
+	print('zero: ' + str(timeZero))
 	print(state.puzzle)
